@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.codecentric.boot.admin.web.AdminController;
@@ -27,27 +28,25 @@ public class DeployController {
 		this.actions = actions;
 	}
 
-	@RequestMapping(value = "/actions", method = RequestMethod.GET)
+	@RequestMapping(value = "/actions", method = GET)
 	public Map<String, DeployAction> getActions() {
 		return actions;
 	}
 	
-	@RequestMapping(value = "/doAction", method = RequestMethod.GET)
-	public ReturnData doAction(DeployProperties.Action action) {
+	@RequestMapping(value = "/doAction", method = POST)
+	public ReturnData doAction(@RequestBody DeployProperties.DeployAction action) {
+		return doActionInvoke(action);
+	}
+
+	@RequestMapping(value = "/doAction/{actionName}", method = GET)
+	public ReturnData doAction(@PathVariable("actionName") String actionName) {
+		return doActionInvoke(actions.get(actionName));
+	}
+	
+	private ReturnData doActionInvoke(DeployProperties.DeployAction action) {
 		String info;
 		try {
 			info = action.doAction();
-			return ReturnData.newReturnData(true, info);
-		} catch (IOException e) {
-			return ReturnData.newReturnData(false, "");
-		}
-	}
-	
-	@RequestMapping(value = "/doAction/{actionName}", method = RequestMethod.GET)
-	public ReturnData doAction(@PathVariable("actionName") String actionName) {
-		String info;
-		try {
-			info = actions.get(actionName).doAction();
 			return ReturnData.newReturnData(true, info);
 		} catch (IOException e) {
 			return ReturnData.newReturnData(false, "");
