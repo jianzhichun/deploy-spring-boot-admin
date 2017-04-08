@@ -11,7 +11,7 @@ var ROOT = __dirname;
 
 module.exports = {
   context: ROOT,
-  entry: { 'turbine': './src/main/webpack/module.js' },
+  entry: { 'deploy': './src/main/webpack/module.js' },
   output: {
     path: DIST,
     filename: '[name]/module.js'
@@ -43,7 +43,7 @@ module.exports = {
     new NgAnnotatePlugin({ add: true }),
     new CopyWebpackPlugin([{
       from: '**/*.html',
-      to: 'turbine',
+      to: 'deploy',
       context: 'src/main/webpack'
     }
     ], { ignore: ['*.tpl.html'] })
@@ -63,10 +63,10 @@ module.exports = {
             proxyRes.pipe = function (sink, options) {
               var opts = options || {};
               opts.end = false;
-              proxyRes.__pipe(sink, zopts);
+              proxyRes.__pipe(sink, opts);
             };
             var suffixModule = '\n';
-            require('http').get('http://localhost:9090/turbine/module.js', function (r) {
+            require('http').get('http://localhost:9090/deploy/module.js', function (r) {
               r.on('data', function (chunk) {
                 suffixModule += chunk;
               });
@@ -86,7 +86,7 @@ module.exports = {
               proxyRes.__pipe(sink, opts);
             };
             var suffixCss = '\n';
-            require('http').get('http://localhost:9090/turbine/module.css', function (r) {
+            require('http').get('http://localhost:9090/deploy/module.css', function (r) {
               r.on('data', function (chunk) {
                 suffixCss += chunk;
               });

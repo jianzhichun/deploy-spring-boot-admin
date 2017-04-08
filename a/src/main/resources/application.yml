@@ -2,9 +2,11 @@ spring.application.name: a
 
 spring.boot.admin.deploy:
   actions:
-    foo:
-      executable: ipconfig
-    bar:
-      executable: ping
-      args:
-        - wwww.baidu.com
+    foo: 
+      -
+        executable: ipconfig
+    bar: 
+      -
+        executable: ping
+        args:
+          - wwww.baidu.com

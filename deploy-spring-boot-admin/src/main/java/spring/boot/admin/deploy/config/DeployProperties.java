@@ -2,12 +2,15 @@ package spring.boot.admin.deploy.config;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import com.google.common.base.Joiner;
 
 /**
  * 
@@ -17,7 +20,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("spring.boot.admin.deploy")
 public class DeployProperties {
 	
-	private Map<String, DeployAction> actions;
+	private Map<String, List<DeployAction>> actions;
 	
 	public interface Action{
 		String doAction() throws IOException;
@@ -56,14 +59,20 @@ public class DeployProperties {
 				return out + System.lineSeparator() + error;
 			}
 		}
+		@Override
+		public String toString() {
+			return "action [ " + executable + " " + Joiner.on(" ").join(args) + " ]";
+		}
+		
 	}
 
-	public Map<String, DeployAction> getActions() {
+	public Map<String, List<DeployAction>> getActions() {
 		return actions;
 	}
 
-	public void setActions(Map<String, DeployAction> actions) {
+	public void setActions(Map<String, List<DeployAction>> actions) {
 		this.actions = actions;
 	}
+
 	
 }
