@@ -15,13 +15,16 @@
  */
 'use strict';
 
+require('./deploy.css');
 module.exports = function ($scope, $http) {
   'ngInject';
   $scope.error = null;
   $scope.actions = [];
+  $scope.a = [];
 
   $http.get('api/deploy/actions').then(function (response) {
-    $scope.actions = response.data;
+    $scope.a = response.data;
+    $scope.actions = Object.keys(response.data);
   });
-
+  
 };

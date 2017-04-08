@@ -55,7 +55,6 @@ module.exports = {
         target: 'http://localhost:8080',
         secure: false,
         onProxyRes: function (proxyRes, req, res) {
-          /* Append the turbine/module.js to the sall-modules.js */
           if (req.path === '/all-modules.js') {
             delete proxyRes.headers['content-length'];
             proxyRes.headers['transfer-encoding'] = 'chunked';
@@ -76,25 +75,6 @@ module.exports = {
             });
           }
 
-          if (req.path === '/all-modules.css') {
-            delete proxyRes.headers['content-length'];
-            proxyRes.headers['transfer-encoding'] = 'chunked';
-            proxyRes.__pipe = proxyRes.pipe;
-            proxyRes.pipe = function (sink, options) {
-              var opts = options || {};
-              opts.end = false;
-              proxyRes.__pipe(sink, opts);
-            };
-            var suffixCss = '\n';
-            require('http').get('http://localhost:9090/deploy/module.css', function (r) {
-              r.on('data', function (chunk) {
-                suffixCss += chunk;
-              });
-              r.on('end', function () {
-                res.end(suffixCss);
-              });
-            });
-          }
         }
       }
     ]

@@ -5,6 +5,8 @@ var angular = require('angular');
 var module = angular.module('sba-deploy', []);
 global.sbaModules.push(module.name);
 
+module.component('deployAction',require('./components/action/actionCtrl.js'));
+
 module.controller('deployCtrl', require('./deployCtrl.js'));
 
 module.config(function ($stateProvider) {
@@ -22,3 +24,5 @@ module.run(function (MainViews) {
     order: 100
   });
 });
+
+module.exports = this.module;

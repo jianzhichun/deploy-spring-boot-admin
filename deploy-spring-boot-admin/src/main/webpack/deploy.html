@@ -1,3 +1,7 @@
 <div class="container-fluid">
-	{{actions}}
+	<div class="deploy-content">
+		<li ng-repeat="action in actions">
+			<deploy-action action='action'></deploy-action>
+		</li>
+	</div>
 </div>
