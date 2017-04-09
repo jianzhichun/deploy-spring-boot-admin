@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>io.github.jianzhichun</groupId>
 			<artifactId>deploy-spring-boot-admin</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>de.codecentric</groupId>
