@@ -1,12 +1,14 @@
 spring.application.name: a
 
-spring.boot.admin.deploy:
-  actions:
-    foo: 
-      -
-        executable: ipconfig
-    bar: 
-      -
-        executable: ping
-        args:
-          - wwww.baidu.com
+spring.boot.admin:
+  url: http://localhost:8080
+  deploy:
+    actions:
+      foo: 
+        -
+          executable: ipconfig
+      bar: 
+        -
+          executable: ping
+          args:
+            - wwww.baidu.com
