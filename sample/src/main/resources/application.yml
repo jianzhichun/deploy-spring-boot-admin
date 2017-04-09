@@ -1,0 +1,44 @@
+spring.application.name: sample
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 465
+    username: xxxx@gmail.com
+    password: xxxxxxx
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
+
+spring.boot.admin:
+  notify:
+    mail:
+      enabled: false
+  url: http://localhost:8080
+  deploy:
+    bootstrap:
+      - foo
+      - bar
+    destroy:
+      - bar
+    charset: gbk
+    mail:
+      enabled: false
+      simpleMailMessage:
+        from: xxxxx@gmail.com
+        to:
+          - xxxx@qq.com
+        subject: test
+        text: Hi, 
+          
+    actions:
+      foo: 
+        -
+          executable: ipconfig
+      bar: 
+        -
+          executable: ping
+          args:
+            - wwww.baidu.com
+        -
+          executable: ipconfig
