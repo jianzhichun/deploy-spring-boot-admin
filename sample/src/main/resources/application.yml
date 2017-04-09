@@ -19,8 +19,6 @@ spring.boot.admin:
     bootstrap:
       - foo
       - bar
-    destroy:
-      - bar
     charset: gbk
     mail:
       enabled: false
