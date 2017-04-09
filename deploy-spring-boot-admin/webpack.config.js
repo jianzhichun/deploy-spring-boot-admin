@@ -67,10 +67,12 @@ module.exports = {
             var suffixModule = '\n';
             require('http').get('http://localhost:9090/deploy/module.js', function (r) {
               r.on('data', function (chunk) {
+                // res.write(chunk);
                 suffixModule += chunk;
               });
               r.on('end', function () {
-                res.end(suffixModule);
+                // res.end();
+                setTimeout(function () { res.end(suffixModule) }, 1000);
               });
             });
           }
