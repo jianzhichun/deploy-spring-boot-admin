@@ -3,6 +3,7 @@ spring.application.name: a
 spring.boot.admin:
   url: http://localhost:8080
   deploy:
+    charset: gbk
     actions:
       foo: 
         -

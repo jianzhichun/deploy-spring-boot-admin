@@ -20,6 +20,8 @@ import com.google.common.base.Joiner;
 @ConfigurationProperties("spring.boot.admin.deploy")
 public class DeployProperties {
 	
+	private static String charset = "utf-8";
+	
 	private Map<String, List<DeployAction>> actions;
 	
 	public interface Action{
@@ -54,8 +56,8 @@ public class DeployProperties {
 	            PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream,errorStream);  
 	            exec.setStreamHandler(streamHandler);  
 	            exec.execute(commandline);  
-	            String out = outputStream.toString();  
-	            String error = errorStream.toString();  
+	            String out = outputStream.toString(charset);  
+	            String error = errorStream.toString(charset);  
 				return out + System.lineSeparator() + error;
 			}
 		}
@@ -64,6 +66,14 @@ public class DeployProperties {
 			return "action [ " + executable + " " + Joiner.on(" ").join(args) + " ]";
 		}
 		
+	}
+	
+	public String getCharset() {
+		return charset;
+	}
+
+	public void setCharset(String charset) {
+		this.charset = charset;
 	}
 
 	public Map<String, List<DeployAction>> getActions() {
