@@ -49,11 +49,8 @@ spring.boot.admin:
   url: http://localhost:8080
   deploy:
     # when project start will run the actions in bootstrap
-    # & when project stop will run the actions in destory
     bootstrap:
       - foo
-      - bar
-    destroy:
       - bar
     # charset should be charset in deployed server
     charset: gbk
