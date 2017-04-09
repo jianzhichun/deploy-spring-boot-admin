@@ -1,7 +1,82 @@
+<style>
+    .deploy-content {
+        width: 70%;
+        margin-left: 15%;
+        border: 1px solid #aaa;
+    }
+    
+    .action-list {
+        padding: 10px;
+    }
+    
+    .accordion-heading {
+        background-color: #aaa;
+    }
+    
+    .list-style {
+        list-style: none;
+        border: 1px solid rgba(149, 143, 143, 0.85);
+    }
+    
+    .div-action {
+        margin-top: 8px;
+    }
+    
+    .action-btn {
+        margin-right: 3%;
+    }
+    
+    .action-detail {
+        padding: 10px 5px;
+        font-size: 12px;
+    }
+</style>
 <div class="container-fluid">
-	<div class="deploy-content">
-		<li ng-repeat="action in actions">
-			<deploy-action action='action'></deploy-action>
-		</li>
-	</div>
+    <div class="deploy-content">
+        <sba-info-panel panel-title="Current Actions">
+            <div class="action-list">
+                <sba-accordion>
+                    <sba-accordion-group ng-repeat="action in actions">
+                        <sba-accordion-heading>
+                            {{action}}
+                        </sba-accordion-heading>
+                        <sba-accordion-body>
+                            <div class="alert alert-success" ng-show="a[action].result.success">
+                                <strong>Success!</strong> {{action}} Action executing success.
+                            </div>
+                            <div class="alert alert-danger" ng-show="a[action].result.success == false">
+                                <strong>Danger!</strong> Indicates a dangerous or potentially negative action.
+                            </div>
+                            <li class="list-style" ng-repeat="step in a[action]">
+                                <div class="action-detail">
+                                    <span>
+                                  excutable : {{step.executable}}
+                                </span>
+                                    <br>
+                                    <span ng-show="step.args">
+                                   args : {{step.args}}
+                                </span>
+                                </div>
+                            </li>
+                            <div class="action-result" ng-if="a[action].isResultReturn">
+                                {{a[action].result.info}}
+                            </div>
+                            <div class="div-action">
+                                <button type="button" class="btn btn-danger action-btn pull-right" ng-click="clearResult(action)">
+                                  Clear Result
+                                </button>
+                                <button class="btn btn-success action-btn pull-right" ng-disabled="a[action].isSpinnerShow" ng-click="takeAction(action)" type="button">
+                                  <i class="fa fa-spinner fa-spin" ng-if="a[action].isSpinnerShow"></i>
+                                  Execute
+                                </button>
+                            </div>
+                        </sba-accordion-body>
+                    </sba-accordion-group>
+                </sba-accordion>
+            </div>
+            <!--<li ng-repeat="action in actions" class="list-action">
+						<deploy-action action='action'></deploy-action>
+					</li>-->
+        </sba-info-panel>
+    </div>
 </div>

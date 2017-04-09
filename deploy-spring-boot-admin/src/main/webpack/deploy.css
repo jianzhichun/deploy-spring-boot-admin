@@ -4,3 +4,8 @@
     border: 1px solid #aaa;
     overflow-y: scroll;
 }
+
+.list-action{
+    list-style: none;
+    border-bottom: 1px solid #eee;
+}

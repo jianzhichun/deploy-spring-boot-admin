@@ -16,15 +16,30 @@
 'use strict';
 
 require('./deploy.css');
-module.exports = function ($scope, $http) {
-  'ngInject';
-  $scope.error = null;
-  $scope.actions = [];
-  $scope.a = [];
+module.exports = function($scope, $http) {
+    'ngInject';
+    $scope.error = null;
+    $scope.actions = [];
+    $scope.a = [];
 
-  $http.get('api/deploy/actions').then(function (response) {
-    $scope.a = response.data;
-    $scope.actions = Object.keys(response.data);
-  });
-  
+    $http.get('api/deploy/actions').then(function(response) {
+        $scope.a = response.data;
+        $scope.actions = Object.keys(response.data);
+    });
+
+    $scope.takeAction = function(action) {
+        $scope.a[action].isSpinnerShow = true;
+        $http.get('api/deploy/doAction/' + action).then(function(response) {
+            //.replace(/\r\n|\n|\r/gm, 'eval("<br/>")')
+            $scope.a[action].result = response.data;
+            $scope.a[action].isResultReturn = true;
+            $scope.a[action].isSpinnerShow = false;
+        });
+    };
+
+    $scope.clearResult = function(action) {
+        $scope.a[action].isResultReturn = false;
+        $scope.a[action].result = '';
+    };
+
 };
