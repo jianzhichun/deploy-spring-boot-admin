@@ -15,7 +15,7 @@
  */
 'use strict';
 
-require('./deploy.css');
+// require('./deploy.css');
 module.exports = function($scope, $http) {
     'ngInject';
     $scope.error = null;

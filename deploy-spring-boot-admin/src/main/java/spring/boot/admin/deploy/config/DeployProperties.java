@@ -22,13 +22,17 @@ public class DeployProperties {
 	
 	private static String charset = "utf-8";
 	
-	private Map<String, List<DeployAction>> actions;
+	private Map<String, List<DeployStep>> actions;
 	
-	public interface Action{
-		String doAction() throws IOException;
+	private String[] bootstrap;
+	
+	private String[] destroy;
+	
+	public interface Step{
+		String doStep() throws IOException;
 	}
 	
-	public static class DeployAction implements Action{
+	public static class DeployStep implements Step{
 		private String executable;
 		private String[] args;
 		public String getExecutable() {
@@ -44,7 +48,7 @@ public class DeployProperties {
 			this.args = args;
 		}
 		@Override
-		public String doAction() throws IOException {
+		public String doStep() throws IOException {
 			try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream();  
 		            ByteArrayOutputStream errorStream = new ByteArrayOutputStream(); ){
 				CommandLine commandline = new CommandLine(executable);
@@ -73,16 +77,32 @@ public class DeployProperties {
 	}
 
 	public void setCharset(String charset) {
-		this.charset = charset;
+		DeployProperties.charset = charset;
 	}
 
-	public Map<String, List<DeployAction>> getActions() {
+	public Map<String, List<DeployStep>> getActions() {
 		return actions;
 	}
 
-	public void setActions(Map<String, List<DeployAction>> actions) {
+	public void setActions(Map<String, List<DeployStep>> actions) {
 		this.actions = actions;
 	}
 
+	public String[] getBootstrap() {
+		return bootstrap;
+	}
+
+	public void setBootstrap(String[] bootstrap) {
+		this.bootstrap = bootstrap;
+	}
+
+	public String[] getDestroy() {
+		return destroy;
+	}
+
+	public void setDestroy(String[] destroy) {
+		this.destroy = destroy;
+	}
 	
+
 }

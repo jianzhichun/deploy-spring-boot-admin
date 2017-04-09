@@ -15,7 +15,7 @@
     
     .list-style {
         list-style: none;
-        border: 1px solid rgba(149, 143, 143, 0.85);
+        border: 0px;
     }
     
     .div-action {
@@ -50,16 +50,15 @@
                             <li class="list-style" ng-repeat="step in a[action]">
                                 <div class="action-detail">
                                     <span>
-                                  excutable : {{step.executable}}
-                                </span>
-                                    <br>
-                                    <span ng-show="step.args">
-                                   args : {{step.args}}
-                                </span>
+                                        {{step.executable}}
+                                    </span>
+                                    <span ng-repeat="arg in step.args">
+                                        {{arg}}
+                                    </span>
                                 </div>
                             </li>
                             <div class="action-result" ng-if="a[action].isResultReturn">
-                                {{a[action].result.info}}
+                                <pre>{{a[action].result.info}}</pre>
                             </div>
                             <div class="div-action">
                                 <button type="button" class="btn btn-danger action-btn pull-right" ng-click="clearResult(action)">
@@ -74,9 +73,6 @@
                     </sba-accordion-group>
                 </sba-accordion>
             </div>
-            <!--<li ng-repeat="action in actions" class="list-action">
-						<deploy-action action='action'></deploy-action>
-					</li>-->
         </sba-info-panel>
     </div>
 </div>
