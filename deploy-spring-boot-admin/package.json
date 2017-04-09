@@ -3,6 +3,7 @@
   "version": "1.4.6",
   "scripts": {
     "build": "npm run build:js",
+    "dev": "npm run dev-server",
     "build:js": "webpack -p",
     "watch:js": "webpack -d --watch",
     "dev-server": "webpack-dev-server --port 9090"
