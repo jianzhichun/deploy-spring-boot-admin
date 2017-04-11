@@ -36,39 +36,12 @@
         <sba-info-panel panel-title="Current Actions">
             <div class="action-list">
                 <sba-accordion>
-                    <sba-accordion-group ng-repeat="action in actions">
+                    <sba-accordion-group ng-repeat="actionsContainer in actionContainers">
                         <sba-accordion-heading>
-                            {{action}}
+                            {{actionsContainer.name}}
                         </sba-accordion-heading>
                         <sba-accordion-body>
-                            <div class="alert alert-success" ng-show="a[action].result.success">
-                                <strong>Success!</strong> {{action}} Action executing success.
-                            </div>
-                            <div class="alert alert-danger" ng-show="a[action].result.success == false">
-                                <strong>Danger!</strong> Indicates a dangerous or potentially negative action.
-                            </div>
-                            <li class="list-style" ng-repeat="step in a[action]">
-                                <div class="action-detail">
-                                    <span>
-                                        {{step.executable}}
-                                    </span>
-                                    <span ng-repeat="arg in step.args">
-                                        {{arg}}
-                                    </span>
-                                </div>
-                            </li>
-                            <div class="action-result" ng-if="a[action].isResultReturn">
-                                <pre>{{a[action].result.info}}</pre>
-                            </div>
-                            <div class="div-action">
-                                <button type="button" class="btn btn-danger action-btn pull-right" ng-click="clearResult(action)">
-                                  Clear Result
-                                </button>
-                                <button class="btn btn-success action-btn pull-right" ng-disabled="a[action].isSpinnerShow" ng-click="takeAction(action)" type="button">
-                                  <i class="fa fa-spinner fa-spin" ng-if="a[action].isSpinnerShow"></i>
-                                  Execute
-                                </button>
-                            </div>
+                            <div ui-view="actionsContainer.name"></div>  
                         </sba-accordion-body>
                     </sba-accordion-group>
                 </sba-accordion>

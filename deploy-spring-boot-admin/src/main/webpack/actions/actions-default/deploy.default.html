@@ -1,0 +1,39 @@
+<div class="container-fluid">
+    <div class="deploy-content">
+        <sba-info-panel panel-title="Current Actions">
+            <div class="action-list">
+                <sba-accordion>
+                    <sba-accordion-group ng-repeat="action in actions">
+                        <sba-accordion-heading>
+                            {{action.name}}
+                        </sba-accordion-heading>
+                        <sba-accordion-body>
+                            <li class="list-style" ng-repeat="step in action.steps">
+                                <div class="action-detail">
+                                    <span>
+                                        {{step.exec}}
+                                    </span>
+                                    <span ng-repeat="arg in step.args">
+                                        {{arg}}
+                                    </span>
+                                </div>
+                            </li>
+                            <div class="action-result" ng-if="action.isResultReturn">
+                                <pre ng-repeat="rs in action.results">{{rs.info}}</pre>
+                            </div>
+                            <div class="div-action">
+                                <button type="button" class="btn btn-danger action-btn pull-right" ng-click="clearResult(action)">
+                                  Clear Result
+                                </button>
+                                <button class="btn btn-success action-btn pull-right" ng-disabled="action.isSpinnerShow" ng-click="doAction(action)" type="button">
+                                  <i class="fa fa-spinner fa-spin" ng-if="action.isSpinnerShow"></i>
+                                  Execute
+                                </button>
+                            </div>
+                        </sba-accordion-body>
+                    </sba-accordion-group>
+                </sba-accordion>
+            </div>
+        </sba-info-panel>
+    </div>
+</div>

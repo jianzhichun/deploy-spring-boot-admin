@@ -1,11 +1,13 @@
 spring.application.name: sample
 
+management.security.enabled: false
+
 spring:
   mail:
     host: smtp.gmail.com
     port: 465
-    username: xxxx@gmail.com
-    password: xxxxxxx
+    username: xxxxx@gmail.com
+    password: xxxxx
     properties:
       mail.smtp.auth: true
       mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
@@ -32,11 +34,9 @@ spring.boot.admin:
     actions:
       foo: 
         -
-          executable: ipconfig
+          exec: ipconfig
       bar: 
         -
-          executable: ping
-          args:
-            - wwww.baidu.com
+          exec: ping wwww.baidu.com
         -
-          executable: ipconfig
+          exec: ipconfig

@@ -9,6 +9,7 @@
     "dev-server": "webpack-dev-server --port 9090"
   },
   "dependencies": {
+    "angular-ui-router": "0.3.1"
   },
   "devDependencies": {
     "clean-webpack-plugin": "0.1.13",

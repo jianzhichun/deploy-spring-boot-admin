@@ -20,20 +20,17 @@ module.exports = function($scope, $http) {
     'ngInject';
     $scope.error = null;
     $scope.actions = [];
-    $scope.a = [];
 
     $http.get('api/deploy/actions').then(function(response) {
-        $scope.a = response.data;
-        $scope.actions = Object.keys(response.data);
+        $scope.actions = response.data;
     });
 
-    $scope.takeAction = function(action) {
-        $scope.a[action].isSpinnerShow = true;
+    $scope.doAction = function(action) {
+        action.isSpinnerShow = true;
         $http.get('api/deploy/doAction/' + action).then(function(response) {
-            //.replace(/\r\n|\n|\r/gm, 'eval("<br/>")')
-            $scope.a[action].result = response.data;
-            $scope.a[action].isResultReturn = true;
-            $scope.a[action].isSpinnerShow = false;
+            action.results = response.data;
+            action.isResultReturn = true;
+            action.isSpinnerShow = false;
         });
     };
 
