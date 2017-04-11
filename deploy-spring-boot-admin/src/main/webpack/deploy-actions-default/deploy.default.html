@@ -1,0 +1,4 @@
+<ul class="nav nav-tabs nav-stacked" ng-show="!actionsContainer.selectedAction" style="transition: 0.6s ease-in-out left">
+    <li ng-repeat="action in actionsContainer.actions"><a ng-click="actionsContainer.selectedAction = action"><small class="muted">Action</small> {{action.name}}</a></li>
+</ul>
+<sba-default-action action="actionsContainer.selectedAction" ng-show="actionsContainer.selectedAction">

@@ -1,0 +1,53 @@
+<style>
+    .deploy-content {
+        width: 70%;
+        margin-left: 15%;
+        border: 0px;
+    }
+    
+    .action-list {
+        padding: 10px;
+    }
+    
+    .accordion-heading {
+        background-color: #aaa;
+    }
+    
+    .list-style {
+        list-style: none;
+        border: 0px;
+    }
+    
+    .div-action {
+        margin-top: 8px;
+    }
+    
+    .action-btn {
+        margin-right: 3%;
+    }
+    
+    .action-detail {
+        padding: 10px 5px;
+        font-size: 12px;
+    }
+</style>
+<li class="list-style" ng-repeat="step in $ctrl.action.steps">
+    <div class="action-detail">
+        <span ng-show="!step.edit" ng-dblclick="$ctrl.editStep(step)">{{step.exec}} {{args}}</span>
+        <input type="text" style="background-color:transparent;" ng-blur="step.edit=false" ng-keypress="($event.which === 13)?step.edit=false:0"
+            ng-show="step.edit" ng-model="step.exec" />
+    </div>
+</li>
+<div class="action-result" ng-if="$ctrl.action.isResultReturn">
+    <pre ng-repeat="rs in $ctrl.action.results">{{rs.info}}</pre>
+</div>
+<div class="div-action">
+    <button type="button" class="btn btn-danger action-btn pull-right" ng-click="$ctrl.clearResult($ctrl.action)">
+        Clear Result
+    </button>
+    <button class="btn btn-success action-btn pull-right" ng-disabled="$ctrl.action.isSpinnerShow" ng-click="$ctrl.doAction($ctrl.action)"
+        type="button">
+        <i class="fa fa-spinner fa-spin" ng-if="$ctrl.action.isSpinnerShow"></i>
+        Execute
+    </button>
+</div>

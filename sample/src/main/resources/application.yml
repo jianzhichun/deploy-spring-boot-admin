@@ -37,6 +37,6 @@ spring.boot.admin:
           exec: ipconfig
       bar: 
         -
-          exec: ping wwww.baidu.com
+          exec: ping www.baidu.com
         -
           exec: ipconfig

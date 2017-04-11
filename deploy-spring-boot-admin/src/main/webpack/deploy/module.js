@@ -7,45 +7,47 @@ global.sbaModules.push(module.name);
 
 module.service('actionsContainerService', function () {
     var actionsContainers = [];
+    var service = this;
     var actionsContainerViews = {
         '': {
-            templateUrl: 'deploy/deploy.html'
+            templateUrl: 'deploy/deploy.html',
+            controller: ['$scope', function ($scope) {
+                $scope.actionsContainers = service.getActionsContainers();
+            }]
         }
     };
+
     this.register = function (actionsContainer) {
         actionsContainers.push(actionsContainer);
-        actionsContainerViews[actionsContainer.name] = actionsContainer;
+        actionsContainerViews[actionsContainer.name + '@deploy'] = actionsContainer;
         actionsContainers.sort(function (a1, a2) {
             return (a1.order || 0) - (a2.order || 0);
+        });
+        $stateProviderRef.state('deploy', {
+            url: '/deploy',
+            views: this.getActionContainerViews()
         });
     };
     this.getActionsContainers = function () {
         return actionsContainers;
     };
-    this.getActionContainerViews = function(){
+    this.getActionContainerViews = function () {
         return actionsContainerViews;
     };
 });
 
 var $stateProviderRef = null;
 
-module.config(function($stateProvider) {
+module.config(function ($stateProvider) {
+
     $stateProviderRef = $stateProvider;
 });
 
-module.run(function($rootScope,MainViews,actionsContainerService) {
-    $stateProviderRef.state('deploy', {
-        url: '/deploy',
-        templateUrl: 'deploy/deploy.html',
-        views: actionsContainerService.getActionContainerViews()
-        // controller: 'deployCtrl'
-    });
-    $rootScope.actionsContainers = actionsContainerService.getActionsContainers();
+module.run(function (MainViews) {
+
     MainViews.register({
         title: 'Deploy',
         state: 'deploy',
         order: 100
     });
 });
-
-// module.exports = this.module;

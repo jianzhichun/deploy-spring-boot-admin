@@ -1,6 +1,6 @@
 'use strict';
 
-var  Webpack = require('webpack'),
+var Webpack = require('webpack'),
   NgAnnotatePlugin = require('ng-annotate-webpack-plugin'),
   CopyWebpackPlugin = require('copy-webpack-plugin'),
   CleanWebpackPlugin = require('clean-webpack-plugin'),
@@ -12,9 +12,10 @@ var isDevServer = path.basename(require.main.filename) === 'webpack-dev-server.j
 var DIST = path.resolve(__dirname, 'target/dist');
 var ROOT = __dirname;
 
-var allModules = glob.sync(ROOT + '/src/main/webpack/actions/*/module.js').map(function (file) {
-  var name = /src\/main\/webpack\/actions\/([^\/]+)\/module\.js/.exec(file)[1];
-  console.log(name);
+var allModules = glob.sync(ROOT + '/src/main/webpack/*/module.js').map(function (file) {
+  var name = /src\/main\/webpack\/([^\/]+)\/module\.js/.exec(file)[1];
+  // name = 'deploy/' + name;
+
   return {
     name: name,
     bundle: name + '/module',
@@ -24,7 +25,7 @@ var allModules = glob.sync(ROOT + '/src/main/webpack/actions/*/module.js').map(f
 });
 
 var getEntries = function (modules) {
-  var entries = { 'deploy': './src/main/webpack/module.js' };
+  var entries = { 'deploy/module': './src/main/webpack/module.js' };
   modules.forEach(function (module) {
     entries[module.bundle] = module.entry;
   });
@@ -88,7 +89,6 @@ module.exports = {
     new NgAnnotatePlugin({ add: true }),
     new CopyWebpackPlugin([{
       from: '**/*.html',
-      to: 'deploy',
       context: 'src/main/webpack'
     }
     ], { ignore: ['*.tpl.html'] })
@@ -97,10 +97,6 @@ module.exports = {
       filename: 'deploy-all-modules.js',
       test: /module\.js/,
       delimiter: ';\n'
-    }, {
-      filename: 'all-modules.css',
-      test: /module\.css/,
-      delimiter: '\n'
     }
   ])),
   devServer: {
@@ -122,25 +118,10 @@ module.exports = {
             var suffixModule = '\n';
             require('http').get('http://localhost:9090/deploy-all-modules.js', function (r) {
               r.on('data', function (chunk) {
-                // res.write(chunk);
                 suffixModule += chunk;
               });
               r.on('end', function () {
-                // res.end();
-                setTimeout(function () {
-                  res.write(suffixModule);
-                  res.end();
-                  // require('http').get('http://localhost:9090/deploy/actions/actions-default/module.js', function (r) {
-                  //   r.on('data', function (chunk) {
-                  //     // res.write(chunk);
-                  //     suffixModule += chunk;
-                  //   });
-                  //   r.on('end', function () {
-                  //     // res.end();
-                  //     setTimeout(function () { res.end(suffixModule) }, 1000);
-                  //   });
-                  // });
-                }, 1000);
+                setTimeout(function () { res.end(suffixModule) }, 1000);
               });
             });
 
