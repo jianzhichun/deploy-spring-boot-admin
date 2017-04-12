@@ -29,7 +29,7 @@ Add below dependencies to your pom
     <dependency>
       <groupId>io.github.jianzhichun</groupId>
       <artifactId>deploy-spring-boot-admin</artifactId>
-      <version>0.1.0</version>
+      <version>0.1.1</version>
     </dependency>
 ```
 Meanwhile, you can add spring-boot-starter-mail for mail-notification function
