@@ -39,7 +39,7 @@
     </div>
 </li>
 <div class="action-result" ng-if="$ctrl.action.isResultReturn">
-    <pre ng-repeat="rs in $ctrl.action.results">{{rs.info}}</pre>
+    <pre ng-repeat="rs in $ctrl.action.results"><span style="white-space:pre-wrap;">{{rs.info}}</span></pre>
 </div>
 <div class="div-action">
     <button type="button" class="btn btn-danger action-btn pull-right" ng-click="$ctrl.clearResult($ctrl.action)">
