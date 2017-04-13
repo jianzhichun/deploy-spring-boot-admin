@@ -34,7 +34,7 @@ module.exports = {
         ctrl.editStep = function(step) {
             step.edit = true;
             step.exec += ([''] || step.args).join(' ');
-            step.args = [];
+            step.args = null;
         };
 
         ctrl.clearResult = function (action) {

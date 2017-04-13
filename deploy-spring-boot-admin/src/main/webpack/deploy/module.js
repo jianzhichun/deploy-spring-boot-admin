@@ -2,37 +2,39 @@
 
 var angular = require('angular');
 
-var module = angular.module('sba-deploy', []);
+var module = angular.module('sba-deploy', [require('angular-ui-bootstrap/src/accordion')]);
 global.sbaModules.push(module.name);
+
+
+var service = null;
+
+var deployState = {
+    url: '/deploy',
+    templateUrl: 'deploy/deploy.html',
+    controller: ['$scope', function ($scope) {
+        $scope.actionsContainers = service.getActionsContainers();
+    }]
+};
 
 module.service('actionsContainerService', function () {
     var actionsContainers = [];
-    var service = this;
-    var actionsContainerViews = {
-        '': {
-            templateUrl: 'deploy/deploy.html',
-            controller: ['$scope', function ($scope) {
-                $scope.actionsContainers = service.getActionsContainers();
-            }]
-        }
-    };
+    service = this;
 
     this.register = function (actionsContainer) {
         actionsContainers.push(actionsContainer);
-        actionsContainerViews[actionsContainer.name + '@deploy'] = actionsContainer;
+        $stateProviderRef.state('deploy.' + actionsContainer.name, actionsContainer);
         actionsContainers.sort(function (a1, a2) {
             return (a1.order || 0) - (a2.order || 0);
-        });
-        $stateProviderRef.state('deploy', {
-            url: '/deploy',
-            views: this.getActionContainerViews()
         });
     };
     this.getActionsContainers = function () {
         return actionsContainers;
     };
-    this.getActionContainerViews = function () {
-        return actionsContainerViews;
+});
+
+module.filter('removeSubString', function () {
+    return function (input) {
+        return input.replace('deploy.', '');
     };
 });
 
@@ -41,6 +43,7 @@ var $stateProviderRef = null;
 module.config(function ($stateProvider) {
 
     $stateProviderRef = $stateProvider;
+    $stateProviderRef.state('deploy', deployState);
 });
 
 module.run(function (MainViews) {

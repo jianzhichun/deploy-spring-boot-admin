@@ -29,7 +29,7 @@ Add below dependencies to your pom
     <dependency>
       <groupId>io.github.jianzhichun</groupId>
       <artifactId>deploy-spring-boot-admin</artifactId>
-      <version>0.1.1</version>
+      <version>0.1.3</version>
     </dependency>
 ```
 Meanwhile, you can add spring-boot-starter-mail for mail-notification function
@@ -69,14 +69,14 @@ spring.boot.admin:
     actions:
       foo: 
         -
-          executable: ipconfig
+          exec: ipconfig
       bar: 
         -
-          executable: ping
+          exec: ping
           args:
-            - wwww.baidu.com
+            - www.baidu.com
         -
-          executable: ipconfig
+          exec: ipconfig
 ```
 ## thanks
 [xigongdaEricyang](https://github.com/xigongdaEricyang)

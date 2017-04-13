@@ -26,7 +26,5 @@ module.controller('deployDefaultCtrl', ['$scope', '$http', function ($scope, $ht
 }]);
 
 module.run(function (actionsContainerService) {
-
     actionsContainerService.register(defaultActionsContainer);
-
 });

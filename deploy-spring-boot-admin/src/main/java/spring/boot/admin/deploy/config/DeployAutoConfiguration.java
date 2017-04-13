@@ -33,6 +33,7 @@ import de.codecentric.boot.admin.config.RevereseZuulProxyConfiguration;
 import rx.Observable;
 import spring.boot.admin.deploy.config.DeployProperties.ActionResult;
 import spring.boot.admin.deploy.config.DeployProperties.DefaultAction;
+import spring.boot.admin.deploy.pipe.Pipeline;
 import spring.boot.admin.deploy.pipe.Pipeline.Defaults.ActionsPipe;
 
 import static spring.boot.admin.deploy.pipe.Pipeline.Defaults.*;
@@ -100,10 +101,7 @@ public class DeployAutoConfiguration {
 			public void run(String... args) throws Exception {
 				Observable<List<ActionResult>> observable = deployService
 						.doActions(properties.getBootstrapList().toArray(new DefaultAction[]{}));
-				Iterator<BootstrapPipe> iter = pipes.iterator();
-				while(iter.hasNext()){
-					observable = observable.map(iter.next());
-				}
+				Pipeline.pipelize(pipes, observable);
 				observable.subscribe();
 			}
 
@@ -119,10 +117,7 @@ public class DeployAutoConfiguration {
 			public void destroy() throws Exception {
 				Observable<List<ActionResult>> observable = deployService
 						.doActions(properties.getDestroyList().toArray(new DefaultAction[]{}));
-				Iterator<DestroyPipe> iter = pipes.iterator();
-				while(iter.hasNext()){
-					observable = observable.map(iter.next());
-				}
+				Pipeline.pipelize(pipes, observable);
 				observable.subscribe();
 			}
 
@@ -136,7 +131,6 @@ public class DeployAutoConfiguration {
 	@ConditionalOnMissingBean(DeployController.class)
 	@Bean DeployController deployController(DeployService deployService, DeployProperties properties,
 			List<ActionsPipe> pipes) {
-		Iterator<ActionsPipe> iter = pipes.iterator();
 		return new DeployController() {
 
 			@RequestMapping(value = "/actions", method = GET)
@@ -148,9 +142,7 @@ public class DeployAutoConfiguration {
 			public List<ActionResult> doActions(@RequestBody DefaultAction... action)
 					throws InterruptedException, ExecutionException {
 				Observable<List<ActionResult>> observable = deployService.doActions(action);
-				while(iter.hasNext()){
-					observable = observable.map(iter.next());
-				}
+				Pipeline.pipelize(pipes, observable);
 				return observable.toBlocking().toFuture().get();
 			}
 
@@ -164,9 +156,7 @@ public class DeployAutoConfiguration {
 												.toArray(new DefaultAction[]{});
 				Observable<List<ActionResult>> observable = deployService
 						.doActions(actions);
-				while(iter.hasNext()){
-					observable = observable.map(iter.next());
-				}
+				Pipeline.pipelize(pipes, observable);
 				return observable.toBlocking().toFuture().get();
 			}
 		};

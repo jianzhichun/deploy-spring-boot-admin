@@ -1,23 +1,21 @@
 <div class="container">
     <h3>Deploy</h3>
-    <sba-accordion>
-        <sba-accordion-group ng-repeat="actionsContainer in actionsContainers">
-            <sba-accordion-heading>
+    <uib-accordion close-others="true">
+        <div ng-repeat="actionsContainer in actionsContainers" style="margin: 0" uib-accordion-group>
+            <uib-accordion-heading>
                 <ul class="breadcrumb" style="margin: 0; background-color: #34302D;">
                     <li style="text-shadow: none;">
                         <small class="muted">Plugin</small>
-                        <a ng-if="actionsContainer.selectedAction" ng-click="actionsContainer.selectedAction = null">{{actionsContainer.name}}</a>
+                        <a ng-if="actionsContainer.selectedAction" ng-click="actionsContainer.selectedAction = null">{{actionsContainer.name | removeSubString}}</a>
                         <span ng-if="actionsContainer.selectedAction" class="divider">/</span>
-                        <span ng-if="!actionsContainer.selectedAction">{{actionsContainer.name}}</span>
+                        <span ng-if="!actionsContainer.selectedAction" ui-sref="{{actionsContainer.name}}">{{actionsContainer.name | removeSubString}}</span>
                     </li>
                     <li style="text-shadow: none;" ng-if="actionsContainer.selectedAction.name">
                         <small class="muted">Action</small> {{actionsContainer.selectedAction.name}}
                     </li>
                 </ul>
-            </sba-accordion-heading>
-            <sba-accordion-body>
-                <div ui-view="{{actionsContainer.name}}"></div>
-            </sba-accordion-body>
-        </sba-accordion-group>
-    </sba-accordion>
+            </uib-accordion-heading>
+            <div style="margin-bottom: 2%;" ui-view></div>
+        </div>
+    </uib-accordion>
 </div>
