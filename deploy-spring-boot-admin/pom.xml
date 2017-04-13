@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.jianzhichun</groupId>
 	<artifactId>deploy-spring-boot-admin</artifactId>
-	<version>0.1.3</version>
+	<version>0.1.4</version>
 
 	<name>deploy-spring-boot-admin</name>
 	<description>spring-boot-admin plugin for deploying</description>

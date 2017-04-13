@@ -4,7 +4,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -101,8 +100,7 @@ public class DeployAutoConfiguration {
 			public void run(String... args) throws Exception {
 				Observable<List<ActionResult>> observable = deployService
 						.doActions(properties.getBootstrapList().toArray(new DefaultAction[]{}));
-				Pipeline.pipelize(pipes, observable);
-				observable.subscribe();
+				Pipeline.pipelize(pipes, observable).subscribe();
 			}
 
 		};
@@ -117,8 +115,7 @@ public class DeployAutoConfiguration {
 			public void destroy() throws Exception {
 				Observable<List<ActionResult>> observable = deployService
 						.doActions(properties.getDestroyList().toArray(new DefaultAction[]{}));
-				Pipeline.pipelize(pipes, observable);
-				observable.subscribe();
+				Pipeline.pipelize(pipes, observable).subscribe();
 			}
 
 		};
@@ -142,8 +139,7 @@ public class DeployAutoConfiguration {
 			public List<ActionResult> doActions(@RequestBody DefaultAction... action)
 					throws InterruptedException, ExecutionException {
 				Observable<List<ActionResult>> observable = deployService.doActions(action);
-				Pipeline.pipelize(pipes, observable);
-				return observable.toBlocking().toFuture().get();
+				return Pipeline.pipelize(pipes, observable).toBlocking().toFuture().get();
 			}
 
 			@RequestMapping(value = "/doAction/{names}", method = GET)
@@ -156,8 +152,7 @@ public class DeployAutoConfiguration {
 												.toArray(new DefaultAction[]{});
 				Observable<List<ActionResult>> observable = deployService
 						.doActions(actions);
-				Pipeline.pipelize(pipes, observable);
-				return observable.toBlocking().toFuture().get();
+				return Pipeline.pipelize(pipes, observable).toBlocking().toFuture().get();
 			}
 		};
 	}
