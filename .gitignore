@@ -19,3 +19,5 @@
 **/bin
 **/.vscode
 **/npm*
+
+**/.factorypath
