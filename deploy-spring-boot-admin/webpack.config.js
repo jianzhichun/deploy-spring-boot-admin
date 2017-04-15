@@ -14,7 +14,6 @@ var ROOT = __dirname;
 
 var allModules = glob.sync(ROOT + '/src/main/webpack/*/module.js').map(function (file) {
   var name = /src\/main\/webpack\/([^\/]+)\/module\.js/.exec(file)[1];
-  // name = 'deploy/' + name;
 
   return {
     name: name,
@@ -25,7 +24,7 @@ var allModules = glob.sync(ROOT + '/src/main/webpack/*/module.js').map(function 
 });
 
 var getEntries = function (modules) {
-  var entries = { 'deploy/module': './src/main/webpack/module.js' };
+  var entries = {};
   modules.forEach(function (module) {
     entries[module.bundle] = module.entry;
   });
