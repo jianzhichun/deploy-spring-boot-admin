@@ -1,53 +1,27 @@
 <style>
-    .deploy-content {
-        width: 70%;
-        margin-left: 15%;
-        border: 0px;
-    }
-    
-    .action-list {
-        padding: 10px;
-    }
-    
-    .accordion-heading {
-        background-color: #aaa;
-    }
-    
     .list-style {
         list-style: none;
         border: 0px;
-    }
-    
-    .div-action {
-        margin-top: 8px;
-    }
-    
-    .action-btn {
-        margin-right: 3%;
     }
     
     .action-detail {
         padding: 10px 5px;
         font-size: 12px;
     }
+    .pre-success {
+        border: 3px solid green;
+    }
+    .pre-danger {
+        border: 3px solid red;
+    }
 </style>
 <li class="list-style" ng-repeat="step in $ctrl.action.steps">
     <div class="action-detail">
-        <span style="word-wrap:break-word" ng-show="!step.edit" ng-dblclick="$ctrl.editStep(step)">{{step.exec}} {{step.args}}</span>
+        <span style="word-wrap:break-word" ng-show="!step.edit" ng-dblclick="$ctrl.editStep(step)">{{step.exec}} {{step.args.join(' ')}}</span>
         <input type="text" style="background-color:transparent;width:98%" ng-blur="step.edit=false" ng-keypress="($event.which === 13)?step.edit=false:0"
             ng-show="step.edit" ng-model="step.exec" />
     </div>
 </li>
-<div class="action-result" ng-if="$ctrl.action.isResultReturn">
-    <pre ng-repeat="rs in $ctrl.action.results"><span style="white-space:pre-wrap;">{{rs.info}}</span></pre>
-</div>
-<div class="div-action">
-    <button type="button" class="btn btn-danger action-btn pull-right" ng-click="$ctrl.clearResult($ctrl.action)">
-        Clear Result
-    </button>
-    <button class="btn btn-success action-btn pull-right" ng-disabled="$ctrl.action.isSpinnerShow" ng-click="$ctrl.doAction($ctrl.action)"
-        type="button">
-        <i class="fa fa-spinner fa-spin" ng-if="$ctrl.action.isSpinnerShow"></i>
-        Execute
-    </button>
+<div ng-if="$ctrl.action.results">
+    <pre ng-class="{'pre-success': rs.success, 'pre-danger': !rs.success}" ng-repeat="rs in $ctrl.action.results"><span style="white-space:pre-wrap;">{{rs.info}}</span></pre>
 </div>

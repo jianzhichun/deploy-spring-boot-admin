@@ -2,12 +2,15 @@ spring.application.name: sample
 
 management.security.enabled: false
 
+#logging.level: 
+#  de.codecentric.boot.admin: DEBUG
+
 spring:
   mail:
     host: smtp.gmail.com
     port: 465
-    username: xxxxx@gmail.com
-    password: xxxxx
+    username: xxxxxxxxxxxxx@gmail.com
+    password: xxxxxxxxxxxxx
     properties:
       mail.smtp.auth: true
       mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
@@ -18,25 +21,26 @@ spring.boot.admin:
       enabled: false
   url: http://localhost:8080
   deploy:
-    bootstrap:
-      - foo
-      - bar
+#    bootstrap:
+#      - foo
+#      - bar
     charset: gbk
     mail:
-      enabled: false
-      simpleMailMessage:
-        from: xxxxx@gmail.com
+      enabled: true
+      simple-mail-message: 
+        from: xxxxxxxxxxxxxxx@gmail.com
         to:
-          - xxxx@qq.com
+          - xxxxxxxxxxxxxxxxx@qq.com
         subject: test
         text: Hi, 
           
     actions:
       foo: 
         -
-          exec: ipconfig
+          exec: cd chun
+          working-directory: C:\Users
       bar: 
         -
-          exec: ping www.baidu.com ping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.comping www.baidu.com
+          exec: ping www.baidu.com
         -
           exec: ipconfig

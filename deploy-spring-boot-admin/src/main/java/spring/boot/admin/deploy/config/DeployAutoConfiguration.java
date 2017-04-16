@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -98,6 +99,8 @@ public class DeployAutoConfiguration {
 
 			@Override
 			public void run(String... args) throws Exception {
+				if(CollectionUtils.isEmpty(properties.getBootstrapList()))
+					return;
 				Observable<List<ActionResult>> observable = deployService
 						.doActions(properties.getBootstrapList().toArray(new DefaultAction[]{}));
 				Pipeline.pipelize(pipes, observable).subscribe();

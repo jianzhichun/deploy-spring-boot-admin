@@ -100,7 +100,7 @@ module.exports = {
       filename: 'deploy-all-modules.js',
       test: /module\.js/,
       delimiter: ';\n'
-    }, {
+    },{
       filename: 'deploy-all-modules.css',
       test: /module\.css/,
       delimiter: ';\n'

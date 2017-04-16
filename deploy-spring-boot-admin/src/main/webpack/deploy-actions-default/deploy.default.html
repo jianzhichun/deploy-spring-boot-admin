@@ -1,4 +1,26 @@
-<ul class="nav nav-tabs nav-stacked" ng-show="!actionsContainer.selectedAction" style="transition: 0.6s ease-in-out left">
-    <li ng-repeat="action in actionsContainer.actions"><a ng-click="actionsContainer.selectedAction = action"><small class="muted">Action</small> {{action.name}}</a></li>
+<uib-accordion-heading ng-init="plugin.disabled=true">
+    <ul class="breadcrumb" style="margin: 0; background-color: #34302D;">
+        <li style="text-shadow: none;">
+            <small class="muted" ng-click="plugin.open=!plugin.open">Plugin</small>
+            <a ng-if="plugin.selectedAction" ng-click="plugin.selectedAction = null">{{plugin.name | uppercase}}</a>
+            <span ng-if="plugin.selectedAction" class="divider">/</span>
+            <span ng-if="!plugin.selectedAction" ng-click="plugin.open=!plugin.open">{{plugin.name | uppercase}}</span>
+        </li>
+        <li style="text-shadow: none;" ng-if="plugin.selectedAction.name">
+            <small class="muted">Action</small> {{plugin.selectedAction.name}}
+        </li>
+        <span class="pull-right label label-warning" ng-if="plugin.selectedAction && plugin.selectedAction.results" ng-click="clearResult(plugin.selectedAction)">
+            CLEAN
+        </span>
+        <span class="pull-right label label-success" style="margin-right:1%" ng-if="plugin.selectedAction" ng-click="doAction(plugin.selectedAction)">
+            <i class="fa fa-spinner fa-spin" ng-if="plugin.selectedAction.showSpin"></i>
+            RUN
+        </span>
+    </ul>
+</uib-accordion-heading>
+<ul class="nav nav-tabs nav-stacked" ng-show="!plugin.selectedAction" style="transition: 0.6s ease-in-out left">
+    <li ng-repeat="action in plugin.actions">
+        <a ng-click="plugin.selectedAction = action"><small class="muted">Action</small> {{action.name}}</a>
+    </li>
 </ul>
-<sba-default-action action="actionsContainer.selectedAction" ng-show="actionsContainer.selectedAction">
+<deploy-default-action action="plugin.selectedAction" ng-show="plugin.selectedAction" />
