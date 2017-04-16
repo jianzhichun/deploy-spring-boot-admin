@@ -4,46 +4,25 @@ var angular = require('angular');
 
 var module = angular.module('sba-deploy', [require('angular-ui-bootstrap/src/accordion')]);
 global.sbaModules.push(module.name);
-
-
-var service = null;
-
-var deployState = {
-    url: '/deploy',
+global.sbaDeployPlugins = global.sbaDeployPlugins || {};
+global.sbaDeployPlugins[''] = {
     templateUrl: 'deploy/deploy.html',
     controller: ['$scope', function ($scope) {
-        $scope.actionsContainers = service.getActionsContainers();
+        $scope.plugins = [];
+        angular.forEach(global.sbaDeployPlugins, function (value, key) {
+            if (key === '') return;
+            value.name = key.replace('@deploy', '');
+            this.push(value);
+        }, $scope.plugins);
     }]
 };
 
-module.service('actionsContainerService', function () {
-    var actionsContainers = [];
-    service = this;
-
-    this.register = function (actionsContainer) {
-        actionsContainers.push(actionsContainer);
-        $stateProviderRef.state('deploy.' + actionsContainer.name, actionsContainer);
-        actionsContainers.sort(function (a1, a2) {
-            return (a1.order || 0) - (a2.order || 0);
-        });
-    };
-    this.getActionsContainers = function () {
-        return actionsContainers;
-    };
-});
-
-module.filter('removeSubString', function () {
-    return function (input) {
-        return input.replace('deploy.', '');
-    };
-});
-
-var $stateProviderRef = null;
-
 module.config(function ($stateProvider) {
 
-    $stateProviderRef = $stateProvider;
-    $stateProviderRef.state('deploy', deployState);
+    $stateProvider.state('deploy', {
+        url: '/deploy',
+        views: global.sbaDeployPlugins
+    });
 });
 
 module.run(function (MainViews) {

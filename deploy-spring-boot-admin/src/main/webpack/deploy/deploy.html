@@ -1,21 +1,24 @@
+<style>
+.collapsing {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  -webkit-transition-timing-function: ease;
+       -o-transition-timing-function: ease;
+          transition-timing-function: ease;
+  -webkit-transition-duration: .35s;
+       -o-transition-duration: .35s;
+          transition-duration: .35s;
+  -webkit-transition-property: height, visibility;
+       -o-transition-property: height, visibility;
+          transition-property: height, visibility;
+}
+</style>
 <div class="container">
     <h3>Deploy</h3>
-    <uib-accordion close-others="true">
-        <div ng-repeat="actionsContainer in actionsContainers" style="margin: 0" uib-accordion-group>
-            <uib-accordion-heading>
-                <ul class="breadcrumb" style="margin: 0; background-color: #34302D;">
-                    <li style="text-shadow: none;">
-                        <small class="muted">Plugin</small>
-                        <a ng-if="actionsContainer.selectedAction" ng-click="actionsContainer.selectedAction = null">{{actionsContainer.name | removeSubString}}</a>
-                        <span ng-if="actionsContainer.selectedAction" class="divider">/</span>
-                        <span ng-if="!actionsContainer.selectedAction" ui-sref="{{actionsContainer.name}}">{{actionsContainer.name | removeSubString}}</span>
-                    </li>
-                    <li style="text-shadow: none;" ng-if="actionsContainer.selectedAction.name">
-                        <small class="muted">Action</small> {{actionsContainer.selectedAction.name}}
-                    </li>
-                </ul>
-            </uib-accordion-heading>
-            <div style="margin-bottom: 2%;" ui-view></div>
+    <uib-accordion close-others="false">
+        <div is-disabled="plugin.disabled" is-open="plugin.open" ng-repeat="plugin in plugins" class="panel-default" style="margin: 0" uib-accordion-group heading="{{plugin.name}}">
+            <div style="margin-bottom: 2%;" ui-view="{{plugin.name}}"></div>
         </div>
     </uib-accordion>
 </div>

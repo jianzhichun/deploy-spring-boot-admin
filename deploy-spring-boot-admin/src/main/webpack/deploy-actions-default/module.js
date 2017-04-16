@@ -4,27 +4,34 @@ var angular = require('angular');
 
 var module = angular.module('sba-deploy-default', []);
 global.sbaModules.push(module.name);
-
-module.component('sbaDefaultAction', require('./components/defaultAction.js'));
-
-var defaultActionsContainer = {
-    name: 'DEFAULT',
-    order: 100,
+var defaultPlugin = {
     templateUrl: 'deploy-actions-default/deploy.default.html',
-    controller: 'deployDefaultCtrl',
-    selectedAction: null
+    controller: 'deployDefaultCtrl'
 };
+global.sbaDeployPlugins = global.sbaDeployPlugins || {};
+global.sbaDeployPlugins['default@deploy'] = defaultPlugin;
+
+module.component('deployDefaultAction', require('./components/deployDefaultAction.js'));
 
 module.controller('deployDefaultCtrl', ['$scope', '$http', function ($scope, $http) {
-    $scope.error = null;
-    $scope.actionsContainer = defaultActionsContainer;
+    $scope.plugin = defaultPlugin;
 
     $http.get('api/deploy/actions').then(function (response) {
-        $scope.actionsContainer.actions = response.data;
+        $scope.plugin.actions = response.data;
     });
+
+    $scope.doAction = function (action) {
+        action.showSpin = true;
+        $http.post('api/deploy/doAction/', [action]).then(function (response) {
+            action.results = response.data;
+            action.showSpin = false;
+        });
+    };
+
+    $scope.clearResult = function (action) {
+        action.results = '';
+    };
 
 }]);
 
-module.run(function (actionsContainerService) {
-    actionsContainerService.register(defaultActionsContainer);
-});
+

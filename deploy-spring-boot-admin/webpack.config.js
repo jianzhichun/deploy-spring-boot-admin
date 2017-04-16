@@ -79,12 +79,16 @@ module.exports = {
       }, {
         test: /\.css(\?.*)?$/,
         loader: ExtractTextPlugin.extract('style', 'css?-minimize')
+      },
+      {
+        test: /\.(ttf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+        loader: 'file-loader'
       }
     ]
   },
   plugins: [
     new CleanWebpackPlugin([DIST]),
-    new ExtractTextPlugin('[name]/module.css'),
+    new ExtractTextPlugin('[name].css'),
     new NgAnnotatePlugin({ add: true }),
     new CopyWebpackPlugin([{
       from: '**/*.html',
@@ -95,6 +99,10 @@ module.exports = {
     {
       filename: 'deploy-all-modules.js',
       test: /module\.js/,
+      delimiter: ';\n'
+    }, {
+      filename: 'deploy-all-modules.css',
+      test: /module\.css/,
       delimiter: ';\n'
     }
   ])),
@@ -116,6 +124,26 @@ module.exports = {
             };
             var suffixModule = '\n';
             require('http').get('http://localhost:9090/deploy-all-modules.js', function (r) {
+              r.on('data', function (chunk) {
+                suffixModule += chunk;
+              });
+              r.on('end', function () {
+                setTimeout(function () { res.end(suffixModule) }, 1000);
+              });
+            });
+
+          }
+          if (req.path === '/all-modules.css') {
+            delete proxyRes.headers['content-length'];
+            proxyRes.headers['transfer-encoding'] = 'chunked';
+            proxyRes.__pipe = proxyRes.pipe;
+            proxyRes.pipe = function (sink, options) {
+              var opts = options || {};
+              opts.end = false;
+              proxyRes.__pipe(sink, opts);
+            };
+            var suffixModule = '\n';
+            require('http').get('http://localhost:9090/deploy-all-modules.css', function (r) {
               r.on('data', function (chunk) {
                 suffixModule += chunk;
               });

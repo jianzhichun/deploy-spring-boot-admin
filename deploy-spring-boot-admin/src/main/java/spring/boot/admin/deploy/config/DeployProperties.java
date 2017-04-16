@@ -1,6 +1,7 @@
 package spring.boot.admin.deploy.config;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class DeployProperties {
 	}
 	
 	public interface Step {
-		String call() throws IOException;
+		String call();
 	}
 
 	public interface Action {
@@ -100,13 +101,8 @@ public class DeployProperties {
 			try {
 				String info = Observable
 						.from(steps)
-						.map(step -> {
-							try {
-								return step.call();
-							} catch (IOException e) {
-								return step.toString() + " ERROR: " + e.getMessage();
-							}
-						})
+						.map(step -> step.call())
+						.onErrorResumeNext(err -> Observable.just(err.getMessage()))
 						.reduce((info1, info2) -> info1 + System.lineSeparator() + info2)
 						.toBlocking()
 						.toFuture()
@@ -161,6 +157,7 @@ public class DeployProperties {
 	public static class DefaultStep implements Step {
 		private String exec;
 		private String[] args;
+		private String workingDirectory = ".";
 
 		public String getExec() {
 			return exec;
@@ -177,9 +174,18 @@ public class DeployProperties {
 		public void setArgs(String[] args) {
 			this.args = args;
 		}
+		
+
+		public String getWorkingDirectory() {
+			return workingDirectory;
+		}
+
+		public void setWorkingDirectory(String workingDirectory) {
+			this.workingDirectory = workingDirectory;
+		}
 
 		@Override
-		public String call() throws IOException {
+		public String call() {
 			try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 					ByteArrayOutputStream errorStream = new ByteArrayOutputStream();) {
 				CommandLine commandline = CommandLine.parse(exec);
@@ -189,17 +195,20 @@ public class DeployProperties {
 				DefaultExecutor exec = new DefaultExecutor();
 				exec.setExitValues(null);
 				PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream, errorStream);
+				exec.setWorkingDirectory(new File(workingDirectory));
 				exec.setStreamHandler(streamHandler);
 				exec.execute(commandline);
 				String out = outputStream.toString(charset);
 				String error = errorStream.toString(charset);
 				return out + System.lineSeparator() + error;
+			} catch (IOException e) {
+				return toString() + " ERROR: " + e.getMessage();
 			}
 		}
 
 		@Override
 		public String toString() {
-			return "action [ " + exec + " " + Joiner.on(" ").join(args) + " ]";
+			return "step [ " + exec + (null == args ? "" : " " + Joiner.on(" ").join(args)) + " ]";
 		}
 
 	}

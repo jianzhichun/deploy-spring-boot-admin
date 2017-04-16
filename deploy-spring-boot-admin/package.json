@@ -9,7 +9,7 @@
     "dev-server": "webpack-dev-server --port 9090"
   },
   "dependencies": {
-    "angular-ui-bootstrap": "^2.5.0"
+    "angular-ui-bootstrap": "2.5.0"
   },
   "devDependencies": {
     "clean-webpack-plugin": "0.1.13",
