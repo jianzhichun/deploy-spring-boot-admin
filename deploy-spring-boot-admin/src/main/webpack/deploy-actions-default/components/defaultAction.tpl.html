@@ -22,6 +22,6 @@
             ng-show="step.edit" ng-model="step.exec" />
     </div>
 </li>
-<div class="action-result" ng-if="$ctrl.action.results">
+<div ng-if="$ctrl.action.results">
     <pre ng-class="{'pre-success': rs.success, 'pre-danger': !rs.success}" ng-repeat="rs in $ctrl.action.results"><span style="white-space:pre-wrap;">{{rs.info}}</span></pre>
 </div>

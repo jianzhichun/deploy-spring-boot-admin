@@ -14,6 +14,9 @@ global.sbaDeployPlugins[''] = {
             value.name = key.replace('@deploy', '');
             this.push(value);
         }, $scope.plugins);
+        $scope.plugins.sort(function (p1, p2) {
+            return (p1.order || 0) - (p2.order || 0);
+        });
     }]
 };
 

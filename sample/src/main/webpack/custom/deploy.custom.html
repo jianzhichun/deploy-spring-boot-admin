@@ -1,0 +1,58 @@
+<uib-accordion-heading ng-init="plugin.disabled=true">
+    <ul class="breadcrumb" style="margin: 0; background-color: #34302D;">
+        <li style="text-shadow: none;">
+            <small class="muted" ng-click="plugin.open=!plugin.open">Plugin</small>
+            <span ng-click="plugin.open=!plugin.open">{{plugin.name | uppercase}}</span>
+        </li>
+        <span class="pull-right label label-warning" ng-if="customAction.results" ng-click="customAction.clearResult()">
+            CLEAN
+        </span>
+        <span class="pull-right label label-success" style="margin-right:1%" ng-if="customAction.steps.length" ng-click="customAction.doAction()">
+            <i class="fa fa-spinner fa-spin" ng-if="customAction.showSpin"></i>
+            RUN
+        </span>
+    </ul>
+</uib-accordion-heading>
+<div>
+<a href="" ng-click="customAction.addParam()">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+</a>
+PLACEHOLDER:
+</div>
+<div ng-repeat="(key,param) in customAction.params track by $index">
+    <ul class="breadcrumb" style="margin: 0px; background-color:transparent; padding: 0px;">
+        <a href="" ng-click="customAction.delParam(key)">
+            <i class="fa fa-minus" style="color:red" aria-hidden="true"></i>
+        </a>
+        <li>
+            <input type="text" ng-style="{'width': 0.5 + param.placeholder.length/2 + 'em'}" style="background-color:transparent" ng-model="param.placeholder"
+            />
+        </li>
+        <li>
+            :
+        </li>
+        <li>
+            <input type="text" ng-model="param.value" />
+        </li>
+
+    </ul>
+</div>
+<div>
+    <a href="" ng-click="customAction.addStep()">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+    </a>
+    STEP:
+</div>
+<div ng-repeat="(key,step) in customAction.steps track by $index">
+    <ul class="breadcrumb" style="margin: 0px; background-color:transparent; padding: 0px;">
+        <a href="" ng-click="customAction.delStep(key)">
+            <i class="fa fa-minus" style="color:red" aria-hidden="true"></i>
+        </a>
+        <li>
+            <input type="text" ng-model="step.exec" />
+        </li>
+    </ul>
+</div>
+<div ng-if="customAction.results">
+    <pre ng-class="{'pre-success': rs.success, 'pre-danger': !rs.success}" ng-repeat="rs in customAction.results"><span style="white-space:pre-wrap;">{{rs.info}}</span></pre>
+</div>

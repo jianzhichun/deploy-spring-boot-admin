@@ -5,6 +5,7 @@ var angular = require('angular');
 var module = angular.module('sba-deploy-default', []);
 global.sbaModules.push(module.name);
 var defaultPlugin = {
+    order: 100,
     templateUrl: 'deploy-actions-default/deploy.default.html',
     controller: 'deployDefaultCtrl'
 };
