@@ -12,6 +12,19 @@ deploy-spring-boot-admin is a plugin for spring-boot-admin
 ![DeployPage After Execute](/images/deployPageAfterExecute.png?raw=true)
 *Page after executing deploy actions*
 
+## sample-project
+
+You can add custom plugins to deploy-spring-boot-admin like sample-project.
+
+see [sample](/sample)
+
+![SamplePage](/images/samplePage.png?raw=true)
+*Sample-project Page*
+
+![SamplePage After Running](/images/samplePageAfterRunningCustomAction.png?raw=true)
+*Sample-project Page after executing custom action*
+
+
 ## quick-start
 
 Add below dependencies to your pom
@@ -29,7 +42,7 @@ Add below dependencies to your pom
     <dependency>
       <groupId>io.github.jianzhichun</groupId>
       <artifactId>deploy-spring-boot-admin</artifactId>
-      <version>0.1.3</version>
+      <version>0.1.6</version>
     </dependency>
 ```
 Meanwhile, you can add spring-boot-starter-mail for mail-notification function
