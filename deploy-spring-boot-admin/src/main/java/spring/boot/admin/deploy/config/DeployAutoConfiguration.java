@@ -32,13 +32,12 @@ import de.codecentric.boot.admin.config.AdminServerWebConfiguration;
 import de.codecentric.boot.admin.config.RevereseZuulProxyConfiguration;
 import rx.Observable;
 import spring.boot.admin.deploy.config.DeployProperties.ActionResult;
-import spring.boot.admin.deploy.config.DeployProperties.DefaultAction;
+import spring.boot.admin.deploy.config.DeployProperties.Action;
 import spring.boot.admin.deploy.pipe.Pipeline;
 import spring.boot.admin.deploy.pipe.Pipeline.Defaults.ActionsPipe;
 
 import static spring.boot.admin.deploy.pipe.Pipeline.Defaults.*;
 import spring.boot.admin.deploy.runner.DeployBootstrap;
-import spring.boot.admin.deploy.runner.DeployDestroy;
 import spring.boot.admin.deploy.web.DeployController;
 import spring.boot.admin.deploy.web.DeployService;
 
@@ -102,22 +101,7 @@ public class DeployAutoConfiguration {
 				if(CollectionUtils.isEmpty(properties.getBootstrapList()))
 					return;
 				Observable<List<ActionResult>> observable = deployService
-						.doActions(properties.getBootstrapList().toArray(new DefaultAction[]{}));
-				Pipeline.pipelize(pipes, observable).subscribe();
-			}
-
-		};
-	}
-
-	@ConditionalOnMissingBean(DeployDestroy.class)
-	@Bean DeployDestroy deployDestroyRunner(DeployService deployService
-			, DeployProperties properties, List<DestroyPipe> pipes) {
-		return new DeployDestroy() {
-
-			@Override
-			public void destroy() throws Exception {
-				Observable<List<ActionResult>> observable = deployService
-						.doActions(properties.getDestroyList().toArray(new DefaultAction[]{}));
+						.doActions(properties.getBootstrapList().toArray(new Action[]{}));
 				Pipeline.pipelize(pipes, observable).subscribe();
 			}
 
@@ -134,12 +118,12 @@ public class DeployAutoConfiguration {
 		return new DeployController() {
 
 			@RequestMapping(value = "/actions", method = GET)
-			public Collection<DefaultAction> getActions() {
+			public Collection<Action> getActions() {
 				return properties.getActionMap().values();
 			}
 
 			@RequestMapping(value = "/doAction", method = POST)
-			public List<ActionResult> doActions(@RequestBody DefaultAction... action)
+			public List<ActionResult> doActions(@RequestBody Action... action)
 					throws InterruptedException, ExecutionException {
 				Observable<List<ActionResult>> observable = deployService.doActions(action);
 				return Pipeline.pipelize(pipes, observable).toBlocking().toFuture().get();
@@ -148,11 +132,11 @@ public class DeployAutoConfiguration {
 			@RequestMapping(value = "/doAction/{names}", method = GET)
 			public List<ActionResult> doActions(@PathVariable("names") String names)
 					throws InterruptedException, ExecutionException {
-				DefaultAction[] actions = Splitter.on("and").splitToList(names)
+				Action[] actions = Splitter.on("and").splitToList(names)
 												.stream()
 												.map(name -> properties.getActionMap().get(name))
 												.collect(Collectors.toList())
-												.toArray(new DefaultAction[]{});
+												.toArray(new Action[]{});
 				Observable<List<ActionResult>> observable = deployService
 						.doActions(actions);
 				return Pipeline.pipelize(pipes, observable).toBlocking().toFuture().get();

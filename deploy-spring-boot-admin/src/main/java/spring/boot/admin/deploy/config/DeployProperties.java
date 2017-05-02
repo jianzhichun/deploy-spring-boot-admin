@@ -20,6 +20,7 @@ import com.google.common.base.Joiner;
 import static com.google.common.collect.Lists.*;
 
 import rx.Observable;
+import rx.functions.Func1;
 
 /**
  * 
@@ -31,22 +32,18 @@ public class DeployProperties {
 
 	private static String charset = "utf-8";
 
-	private Map<String, List<DefaultStep>> actions;
+	private Map<String, List<Step>> actions;
 	
-	private Map<String, DefaultAction> actionMap;
+	private Map<String, Action> actionMap;
 
 	private List<String> bootstrap = newArrayList();
 	
-	private List<DefaultAction> bootstrapList = newArrayList();
+	private List<Action> bootstrapList = newArrayList();
 
-	private List<String> destroy = newArrayList();
-	
-	private List<DefaultAction> destroyList = newArrayList();
-	
 	@PostConstruct void initialize() throws InterruptedException, ExecutionException {
 		actionMap = Observable
 						.from(actions.entrySet())
-						.map(entry -> DefaultAction.newDefaultAction(entry.getKey(), entry.getValue()))
+						.map(entry -> Action.newDefaultAction(entry.getKey(), entry.getValue()))
 						.toMap(action -> action.getName())
 						.toBlocking()
 						.toFuture()
@@ -54,27 +51,39 @@ public class DeployProperties {
 		bootstrapList = bootstrap.stream()
 							.map(name -> actionMap.get(name))
 							.collect(Collectors.toList());
-		destroyList = destroy.stream()
-							.map(name -> actionMap.get(name))
-							.collect(Collectors.toList());
 	}
 	
-	public interface Step {
-		String call();
-	}
 
-	public interface Action {
-		ActionResult call();
-	}
-
-	public static class DefaultAction implements Action {
+	public static class Action {
 		private String name = "undefined";
-		private List<DefaultStep> steps;
+		private List<Step> steps;
+		private static Func1<Action, ActionResult> runner = new Func1<Action, ActionResult>(){
+
+			@Override
+			public ActionResult call(Action t) {
+				try {
+					String info = Observable
+							.from(t.getSteps())
+							.map(step -> step.call())
+							.onErrorResumeNext(err -> Observable.just(err.getMessage()))
+							.reduce((info1, info2) -> info1 + System.lineSeparator() + info2)
+							.toBlocking()
+							.toFuture()
+							.get();
+					return ActionResult
+							.newActionResult(!StringUtils.containsIgnoreCase(info, "ERROR")
+									, t.getName() + ": " + System.lineSeparator() + info);
+				} catch (InterruptedException | ExecutionException e) {
+					return ActionResult.newActionResult(false, t.getName() + " ERROR: " + e.getMessage());
+				}
+			}
+			
+		};
 		
-		private DefaultAction(){};
+		private Action(){};
 		
-		public static DefaultAction newDefaultAction(String name, List<DefaultStep> steps){
-			DefaultAction defaultAction = new DefaultAction();
+		public static Action newDefaultAction(String name, List<Step> steps){
+			Action defaultAction = new Action();
 			defaultAction.setName(name);
 			defaultAction.setSteps(steps);
 			return defaultAction;
@@ -88,31 +97,25 @@ public class DeployProperties {
 			this.name = name;
 		}
 
-		public List<DefaultStep> getSteps() {
+		public List<Step> getSteps() {
 			return steps;
 		}
 
-		public void setSteps(List<DefaultStep> steps) {
+		public void setSteps(List<Step> steps) {
 			this.steps = steps;
 		}
+		
+		
+		public Func1<Action, ActionResult> getRunner() {
+			return runner;
+		}
 
-		@Override
+		public void setRunner(Func1<Action, ActionResult> runner) {
+			Action.runner = runner;
+		}
+
 		public ActionResult call(){
-			try {
-				String info = Observable
-						.from(steps)
-						.map(step -> step.call())
-						.onErrorResumeNext(err -> Observable.just(err.getMessage()))
-						.reduce((info1, info2) -> info1 + System.lineSeparator() + info2)
-						.toBlocking()
-						.toFuture()
-						.get();
-				return ActionResult
-						.newActionResult(!StringUtils.containsIgnoreCase(info, "ERROR")
-								, name + ": " + System.lineSeparator() + info);
-			} catch (InterruptedException | ExecutionException e) {
-				return ActionResult.newActionResult(false, name + " ERROR: " + e.getMessage());
-			}
+			return runner.call(this);
 		}
 
 	}
@@ -154,11 +157,38 @@ public class DeployProperties {
 		
 	}
 	
-	public static class DefaultStep implements Step {
+	public static class Step {
 		private String exec;
 		private String[] args;
 		private String workingDirectory = ".";
 
+		private static Func1<Step, String> runner = new Func1<Step, String>(){
+
+			@Override
+			public String call(Step t) {
+				try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+						ByteArrayOutputStream errorStream = new ByteArrayOutputStream();) {
+					CommandLine commandline = CommandLine.parse(t.getExec());
+					if (null != t.getArgs()) {
+						commandline.addArguments(t.getArgs());
+					}
+					DefaultExecutor exec = new DefaultExecutor();
+					exec.setExitValues(null);
+					PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream, errorStream);
+					exec.setWorkingDirectory(new File(t.getWorkingDirectory()));
+					exec.setStreamHandler(streamHandler);
+					exec.execute(commandline);
+					String out = outputStream.toString(charset);
+					String error = errorStream.toString(charset);
+					return out + System.lineSeparator() + error;
+				} catch (IOException e) {
+					return toString() + " ERROR: " + e.getMessage();
+				}
+			}
+
+			
+		};
+		
 		public String getExec() {
 			return exec;
 		}
@@ -184,26 +214,17 @@ public class DeployProperties {
 			this.workingDirectory = workingDirectory;
 		}
 
-		@Override
 		public String call() {
-			try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-					ByteArrayOutputStream errorStream = new ByteArrayOutputStream();) {
-				CommandLine commandline = CommandLine.parse(exec);
-				if (null != args) {
-					commandline.addArguments(args);
-				}
-				DefaultExecutor exec = new DefaultExecutor();
-				exec.setExitValues(null);
-				PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream, errorStream);
-				exec.setWorkingDirectory(new File(workingDirectory));
-				exec.setStreamHandler(streamHandler);
-				exec.execute(commandline);
-				String out = outputStream.toString(charset);
-				String error = errorStream.toString(charset);
-				return out + System.lineSeparator() + error;
-			} catch (IOException e) {
-				return toString() + " ERROR: " + e.getMessage();
-			}
+			return runner.call(this);
+		}
+		
+		
+		public static Func1<Step, String> getRunner() {
+			return runner;
+		}
+
+		public static void setRunner(Func1<Step, String> runner) {
+			Step.runner = runner;
 		}
 
 		@Override
@@ -221,11 +242,11 @@ public class DeployProperties {
 		DeployProperties.charset = charset;
 	}
 
-	public Map<String, List<DefaultStep>> getActions() {
+	public Map<String, List<Step>> getActions() {
 		return actions;
 	}
 
-	public void setActions(Map<String, List<DefaultStep>> actions) {
+	public void setActions(Map<String, List<Step>> actions) {
 		this.actions = actions;
 	}
 
@@ -237,24 +258,12 @@ public class DeployProperties {
 		this.bootstrap = bootstrap;
 	}
 
-	public List<String> getDestroy() {
-		return destroy;
-	}
-
-	public void setDestroy(List<String> destroy) {
-		this.destroy = destroy;
-	}
-
-	public Map<String, DefaultAction> getActionMap() {
+	public Map<String, Action> getActionMap() {
 		return actionMap;
 	}
 
-	public List<DefaultAction> getBootstrapList() {
+	public List<Action> getBootstrapList() {
 		return bootstrapList;
-	}
-
-	public List<DefaultAction> getDestroyList() {
-		return destroyList;
 	}
 	
 	
